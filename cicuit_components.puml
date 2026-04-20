@@ -1,0 +1,55 @@
+@startuml
+
+object circuit_components{
+}
+
+object resistors{
++ V = R*I
++ series: R1 + R2 + ...
++ parallel: 1/(1/R1 + 1/R2 + ...)
+}
+
+object capacitors{
++ Q = C*V (defining equation)
++dQ/dt = C*dV/dt = I = V/R (-?)
++ C = (eps_r * eps_0 * A) / dist
++ U_C = CV²/2 (charging up, supply with energy, stored internally as electric field)
++ 5RC - approx. value for duration of dis- and charging (separately)
+- series = C_tot * V = Q_tot = Q1 + Q2 + ... = C1V + C2V ... = (C1+C2+...)V
+-parallel: C1C2.../(C1+C2) = 1/(1/C1 + 1/C2 + ...)
+....
+physic concepts:
+-electric fields
+}
+
+object inductors{
+U = L*dI/dt (defining equation)
+U_L = L*I² / 2(investerd Energy is internally stored in a magnetic field)
+....
+physic concepts:
+-magnetic field
+-Lenz-Law
+-Induction
+}
+
+object transformer{
+(AC-only device)
+P = VI
+V_p / V_s = N_p / N_s
++primary, secondary (coils)
++uses a changing magnetic field to "transport" energy from one circuit to another without the wires touching
+...
+physical concepts
+}
+
+object diode {
+}
+
+object transistors{
+}
+
+circuit_components *-- resistors
+circuit_components *-- capacitors
+circuit_components *-- inductors
+circuit_components *-- transistors
+@enduml
