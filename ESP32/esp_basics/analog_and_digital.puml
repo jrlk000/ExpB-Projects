@@ -1,0 +1,80 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+title Microcontroller Concept overview
+
+title analog and digital signals
+
+object PWM {
+Generates a digital pulse pattern.
+regulating parameters:
+    -duty cycle (Quota of high phase during a cycle length)
+    -frequency (defines cycle length)
+....
+code:
+- from machine import PWM
+PWM(Pin(idx), freq=, duty=)
+pwm.freq()
+pwm.duty_u16() #relative duty cycle as a fraction of the whole period.
+pwm.duty_ns() #define how long the signal stay HIGH within a period.
+....
+values
+-frequency: abitrary, just defines you period for the signal
+-duty_u16: [0 - 2¹⁶ = 65535) (16 bit scale)
+}
+
+object ADC {
+Maps measured analog values into a number.
+Pins: 32, 33, 34, 35 (in the beginning stages of development)
+regulating parameters:
+resolutions:
+- n element of {9, 10, 11, 12} #bit
+-bit resolution [0 - 3.3V] -> [0 - 2^n = 256) with steps dV = 3.3V/256
+(resolution refers in this context to how finely the analog input is divided into digital steps))
+-attentuation (reduction/amplification factor described in dB)
+- k element of {0, 2_5, 6, 11} #dB
+-sampling time in ns
+(defines how long the ADC spends time sampling the input signal before converting it))
+-example:
+-allowed voltage spectra
+0 dB -> about 0V to 1.0 V and 11 dB -> 0V to 3.3V
+-step with
+0 dB, 12-bit 1.0 / 2¹² #V/per step
+11 dB, 12-bit 3.3 / 2¹² #V/per step
+
+
+....
+code:
+#outdated
+ADC(Pin(idx))
+adc.width(ADC.WIDTH_nBIT)
+adc.atten(ADC.ATTN_kDB) #sets the attenuation of the ADC input
+adc.read() #reading an input voltage
+
+#newest
+adc.block().init(bits=n)
+adc.init(atten=ADC.ATTN_kDB)
+adc.read_u16()
+}
+
+object DAC {
+Maps given number to corresponding analog value.
+Pins: 25, 26 are able to create real analog values
+regulating parameters:
+-8bit resolution j element of [0 - 2⁸ = 256) -> [0 - 3.3V] with steps dV = 3.3V/256
+(resolution refers in this context to how finely the analog input is divided into digital steps))
+-DAC(Pin(idx))
+dac.write(j)
+}
+
+object BasicExecution {
+code:
+run a file lying in the file system:
+exec(open('blank_paper.py').read)
+
+run statements via REPL:
+
+}
+
+DAC <-> ADC : inverted operators
+
+@enduml

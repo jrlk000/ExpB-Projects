@@ -1,0 +1,106 @@
+
+@startuml
+title Polygon Game Architecture (Rigid Transform per Frame)
+
+package "Geometry" {
+  class Polygon {
+    +V_rest : float[n][2]      ' model-space verts; pivot at (0,0)
+    +V_world : float[n][2]     ' world-space verts; updated each frame
+    +E : int[m][2]             ' edge index pairs (constant topology)
+    +AABB : (minx,min,maxx,maxy)
+    +r_max : float
+    -- API --
+    +vertices() : float[n][2]
+    +edges() : int[m][2]
+    +replace_world_coord(V_new: float[n][2], center: float[2]) : void
+  }
+}
+
+package "Physics" {
+  class PhysicalState {
+    +center : float[2]
+    +theta  : float  ' radians; clockwise-positive for y+ down
+  }
+
+  class RigidTransformSystem {
+    {static} +sync_from_physical_state(V_rest: float[n][2], theta: float) : float[n][2]
+  }
+
+  note right of RigidTransformSystem
+    Produces rotated vertices from V_rest using screen-space rotation:
+      R = [[ cosθ,  sinθ],
+           [-sinθ,  cosθ]]
+    Translation by 'center' is applied by Polygon.replace_world_coord(...)
+  end note
+}
+
+package "Collision" {
+  class CollisionHelper {
+    {static} +normalize_vectors(v) : float[2]
+    {static} +orientation(v1, v2) : int
+    {static} +on_segment(segment: float[2][2], point: float[2]) : bool
+    {static} +share_endpoints(seg1: float[2][2], seg2: float[2][2]) : bool
+    {static} +on_the_same_side(pivot_segment: float[2][2], check_segment: float[2][2]) : int
+    {static} +do_intersect(a: float[2][2], b: float[2][2], count_endpoints: bool) : bool
+    {static} +aabb(V: float[n][2]) : (minx,miny,maxx,maxy)
+    {static} +aabb_overlap(AABB, AABB) : bool
+    {static} +find_intersection_point(edge1, edge2) : np.ndarray
+    {static} +enclosed_by(A: Polygon, B: Polygon) : bool
+  }
+
+  class PolygonPolygonCollision {
+    {static} +cross_lines(A: Polygon, B: Polygon) : bool
+    {static} +find_collision(A: Polygon, B: Polygon) : bool
+  }
+}
+
+package "ECS / Game" {
+  class Entity {
+    +active : bool
+    +polygon : Polygon
+    +physical_state : PhysicalState
+    +internal_type: string
+  }
+  class Asteroid {
+  }
+  class Spaceship {
+    +fire_projectiles: None
+    +manage_projectiles: None
+  }
+  class Projectile {
+  }
+
+  class GameSystem {
+    {static} +step(entities: Sequence<Entity>) : void
+  }
+
+  class Renderer {
+    +draw(poly: Polygon) : void
+    +draw_wrapped(poly: Polygon, view_size: (float,float)) : void
+  }
+}
+
+package "Constants" {
+  class G_CONST {
+    +EPS : float
+  }
+}
+
+' === Relationships ===
+Entity o-- Polygon
+Entity o-- PhysicalState
+GameSystem ..> Entity : step(...)
+RigidTransformSystem ..> Polygon : updates V_world (via replace_world_coord)
+PolygonPolygonCollision ..> Polygon
+PolygonPolygonCollision ..> CollisionHelper
+Renderer ..> Polygon
+CollisionHelper ..> G_CONST
+Polygon ..> G_CONST
+
+Entity <|-- Asteroid
+Entity <|-- Spaceship
+Entity <|-- Projectile
+note "Screen coordinates: y+ is down. R uses clockwise-positive angles. Edges E are int index pairs. Segments = V_world[E] with shape (m,2,2)." as N1
+Polygon .. N1
+
+@enduml

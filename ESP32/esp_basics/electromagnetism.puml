@@ -1,0 +1,75 @@
+@startuml
+title Electromagnetism
+
+object electrostatics {
+Electric charges at rest.
+----
+questions:
+- electric field created by charge
+- force between charges
+- voltage rising from charge distribution
+----
+concepts:
+-charge
+-electric field
+-electric potential / voltage
+capacitors
+}
+
+object magnetostatics{
+Steady currents or magnetic effects that do not change with time.
+----
+questions:
+-magnetic filed produced by a wire with constant current
+-force acting on moving charges in magnetic fields
+-coils and permanent magnets create magnetic fields
+----
+concepts:
+-magnetic field
+-lorentz force
+-(Amperes law)
+-(Biot-Savart law)
+}
+
+object electrodynamics{
+Phenomena that are caused by changing electric and magnetic fields.
+----
+electricity and magnetism become strongly linke:
+- changing electric fields can create magnetic fields
+- changing magnetic fields can create elcetric fields
+----
+concepts:
+-induction
+-time-varying fileds
+Maxwell's equations
+-circcuits in a deeper physical sense.
+}
+
+object electromagnetic_waves{
+Important subsection of electrodynamics.
+----
+- how electric and magnetic fields propagade through space
+- light as an electromagnetic wave
+- radio, micro, infrared. visible light, UV, X-rays (EM-wave spectrum)
+----
+concepts
+-wave propagation
+-wave characteristics
+-light
+-radiation from antennas
+}
+
+object circuit_theory_applied_electromagnetism {
+Using electromagnetic effects in practical electrical systems.
+deals with:
+- resistors, capacitors, inductors
+- voltage, current, power
+-AC and DC circuits
+-motors, generators, transformers, forces from magnetic fields
+}
+
+electrodynamics o-- electromagnetic_waves
+electrostatics o-- circuit_theory_applied_electromagnetism
+electrodynamics o-- circuit_theory_applied_electromagnetism
+magnetostatics o-- circuit_theory_applied_electromagnetism
+@enduml

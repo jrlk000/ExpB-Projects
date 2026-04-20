@@ -1,0 +1,14 @@
+@startuml
+
+object interrupt{
+Two ways to react to a button:
+....
+1) Polling - repeted ask in a loop
+- Program keeps checking the pin again and again.
+2) Interrupts
+- Hardware watches the pin, and when the event happens, it calls your function.
+code: button.irq(trigger= , handler= )
+trigger: IRQ.RISING low->high, IRQ.FALLING high->low chosen trigger depends on how the button is wired
+handler: type func, encoded behaviour that should be applied after push.
+}
+@enduml

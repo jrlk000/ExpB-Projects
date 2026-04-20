@@ -1,0 +1,15 @@
+@startuml
+title compiled machine code vs interpreted script code
+
+object compiled_machine_code {
+.bin file (firmware)
+-spoken in 'native tongue' of the hardware
+-is abinary image it contains the raw machine instructions that the ESP32's processor understands directly
+- if you 'burn' a .bin file, you are essentially rewriting the entire operating manual of the chip
+}
+
+object interpreted_script_code {
+.py
+-filr needs a translator
+}
+@enduml

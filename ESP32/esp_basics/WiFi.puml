@@ -1,0 +1,119 @@
+@startuml
+title wifi
+
+object wifi_notes {
+- groupes local devices in a network based on radio waves
+- enables access to the internet for connected group
+}
+
+object wifi_vs_bluetooth {
+mental picture
+bluetooth:bicycle <-> WiFi:sports car
+-> same physics but other designes, strengths ...
+----
+bluetooth has limitations, which makes it tough to use it for the same as smart home:
+- mostly designed for point-to-point
+- bluetooth gives up after 10 meters, WI-Fi can cover an entire house etc.
+- bluetooth sends tiny packets of data (tops out at about 2Mbps) (download videos etc. would take forever))
+-wifi uses much more power to 'scream' data across the room (ESP: 72Mbps to 150 Mbps)
+----
+modulation (decode information into physical waves):
+ble: uses a simple alphabet (GFSK). It slightly shifts the frequency up or down to represent data.
+WiFi: much more complex alphabet called QAM (Quadrature-Amplitude MOdulation). It changes both the amplitude and the phase simultaneously.
+----
+- usecases:
+ble:(sending simple things: sensor data, audio clips, simple commands),
+WiFi: (if ESP32 should act like a computer downloading software, updates from internet, communicating with multiple devices across a larger area))
+}
+
+class Station_mode{
+    +(str) ssidRouter
+    +(str) passwordRouter
+
+    -STA_Setup(ssidRouter, passwordRouter)
+    ----
+    methods used on the sta_if object (station mode interface)
+    -is.connected()
+    -active()
+    -connect(ssidRouter, passwordRouter)
+    -disconnect()
+
+}
+class esp_wifi_modes {
+-participating in a network in station mode
+-acting as access point
+}
+
+class AP_mode{
++ssidAP
+passwordAP
+
++local_IP
++gateway
++subnet
++dns
++ap_if
+
+-AP_Setup(ssidAP, passwordAP)
+----
+methods used on the access point interface 'ap_if'
+-ifconfig(local_IP, gateway, subnet, dns)
+-config(ssidAP, authmode, password)
+-active(bool)
+-disconnect()
+}
+
+object wifi_roles {
+structural roles (where does device sit in network architecture and how it connects to others)
+-host
+-node
+-access point
+----
+rules in a conversation / functional roles
+-server:responses
+-client:requests
+----
+single device can hold roles from both categories at once
+e.g.:
+-server in a data center - physically a host and a node while functionally acting as a server
+-device acting liek a server and a client simultaneously (esp connected through home wifi to the internet and hosting a webpage for other devices)
+}
+
+object host {
+host:broad term for any connected device possessing an IP-address
+}
+
+object node {
+upper set of hosts including any connection point in a network
+}
+
+object access_point{
+access point:device that allows other devices to connect to a weired network using Wi-Fi
+take wifi (radio wafes) from device and convert into electric signals or light pulses that can travel through the eternet cable of the building
+-lives in two worlds:
+-wireless side:MANAGE HANDSHAKES WITH DEVICES, SECURITY PASSWORDS, SIGNAL STRENGTH
+-wired side:passes that data onto the physical network
+}
+
+object client {
+device or software that requests that service or data
+-average participant device
+-sends data
+}
+
+object server {
+device or software that provides a service or data (like a website or a file)
+-requests data
+-enables conversations in network between clients
+}
+
+wifi_rules *-- host
+wifi_rules *-- access_point
+wifi_rules *-- node
+wifi_rules *-- server
+wifi_rules *-- client
+
+
+esp_wifi_modes *-- AP_mode
+esp_wifi_modes *-- Station_mode
+@enduml

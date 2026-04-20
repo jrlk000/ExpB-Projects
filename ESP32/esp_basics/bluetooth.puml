@@ -1,0 +1,38 @@
+@startuml
+title bluetooth
+class BLEPeripheral {
+-_ble : BLE
+-_connections : set
+-_write_callback : Callable
+-_handle_tx
+-_handle_rx
+-_payload
+
+-_irq()
+-_advertise(interval_us=5*1e5 : int)
+
++send(tx_data)
++is_connected()
++on_write(callback:Callable)
+}
+
+object demo{
++ble : BLE
++p : BLEPeripheral
+
++on_write(rx_data)
+-receive_message_loop(p : BLEPeripheral)
+}
+
+object ble_advertising{
++advertising_payload(limited_disc=False, br_edr=False, name=None, services=None, appearance=0)
++decode_field(payload, adv_type)
++decode_name(payload)
++decode_services(payload)
++demo()
+
+}
+
+demo *-- BLEPeripheral
+BLEPeripheral ..> ble_advertising
+@enduml
